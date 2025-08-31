@@ -1,0 +1,37 @@
+/******************************install laravel*************************************\
+1- git clone https://github.com/laravel/laravel.git
+2- composer install 
+3- .env
+4- generation key -> php artisan key:generate
+5- run migrations -> php artisan migrate 
+6- laravel server -> php artisan serve -> http://127.0.0.1:8000
+/************************************************************************************\
+
+/************************************************************************************\
+Create Controller -> php artisan make:Controller TestController
+Create Model -> Test
+/************************************************************************************\
+
+database existed -> use
+migration Create table categories -> php artisan make:migration create_categories_table
+
+Model interact with table category -> php artisan make:model Category
+/************************************************************************************\
+
+create mode and migration and Controller -> php artisan make:model -mc
+
+
+/**************************************relationShips**********************************************\
+1-1 user hasOne -> contant belongs to one
+
+1-* category hasMany -> books belongs to one
+
+*-* orders hasMany -> products belongs to many
+/***************************************************************************************************\
+
+
+
+1-migration 
+2-model 
+3-Controller
+4-view
