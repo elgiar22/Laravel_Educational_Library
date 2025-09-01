@@ -30,15 +30,17 @@ class BookController extends Controller
             $data = $request->validate([
                 'title'=>'required|string|max:200',
                 'desc'=>'required|string',
-                'price'=>'required|numeric',
                 'image' =>'required|image|mimes:png,jpg,jpeg,gif',
+                'file_path' => 'required|file|mimes:pdf|max:100240',
                 'category_id'=>'required|numeric|exists:categories,id'
             ]);
         //store 
     
             $data['image'] = Storage::putFile("books",$request->image);
-            $data['user_id'] = 1;
-        
+            $data['file_path'] = Storage::putFile("files",$request->file_path);
+
+            $data['user_id'] = 1; //ererrr
+            // $data['user_id'] = auth()->id();
             Book::create($data);
             session()->flash("success","data inserted successfuly");
             //redirect all
@@ -59,8 +61,8 @@ class BookController extends Controller
             $data = $request->validate([
                 'title'=>'required|string|max:200',
                 'desc'=>'required|string',
-                'price'=>'required|numeric',
                 'image' =>'image|mimes:png,jpg,jpeg,gif',
+                'file_path' => 'file|mimes:pdf|max:100240',
                 'category_id'=>'required|numeric|exists:categories,id'
             ]);
 
@@ -75,6 +77,17 @@ class BookController extends Controller
             }else{
                 $data['image'] = $book->image;
             }
+
+            if($request->has('file_path')){
+            //delete old file
+             Storage::delete($book->file_path);
+         //upload new file
+                $data['file_path'] = Storage::putFile("files",$request->file_path);        
+            }else{
+                $data['file_path'] = $book->file_path;
+            }
+
+
 
             $book->update($data);
 
@@ -92,6 +105,11 @@ class BookController extends Controller
 
         Storage::delete($book->image);
     }
+
+    if ($book->file_path) {
+
+        Storage::delete($book->file_path);
+    }
         $book->delete();
 
 
@@ -99,5 +117,7 @@ class BookController extends Controller
         
         return redirect(route('allBooks'));
     
+    
     }
+
 }

@@ -12,19 +12,20 @@ class CategoryController extends Controller
 
     public function all(){
         //select * from categories
-        $categories = Category::paginate(3) ;
-        return view("categories.all",compact('categories'));
+        $categories = Category::withCount('books')->paginate(3);
+;
+        return view("Categories.all",compact('categories'));
     }
 
     public function show($id){
         //select * from categories where id=$id
         $category = Category::findOrFail($id);
-        return view("categories.show",compact('category'));
+        return view("Categories.show",compact('category'));
 
     }
 
     public function create(){
-        return view("categories.create");
+        return view("Categories.create");
     }
 
         public function store(Request $request){
@@ -48,7 +49,7 @@ class CategoryController extends Controller
 
     public function edit($id){
         $category = Category::findOrFail($id);
-        return view ("categories.edit",compact("category"));
+        return view ("Categories.edit",compact("category"));
         
     }
 

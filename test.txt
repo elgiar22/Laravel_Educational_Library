@@ -31,6 +31,9 @@ create mode and migration and Controller -> php artisan make:model -mc
 
 
 
+edit culomn in database -> php artisan make:migration add_to_users_table
+
+
 1-migration 
 2-model 
 3-Controller

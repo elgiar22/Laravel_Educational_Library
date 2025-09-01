@@ -21,10 +21,6 @@ class AuthController extends Controller
         "email"=>"required|email|max:255",
         "password"=>"required|string|min:8|confirmed",
         ]);
-
-        $request->session()->flash('name', $data['name']);
-        $request->session()->flash('email', $data['email']);
-
         $data['password'] = bcrypt($request->password);
 
         $user = User::create($data);
@@ -57,14 +53,17 @@ class AuthController extends Controller
         $request->session()->flash('email', $data['email']);
 
         $valid = Auth::attempt(["email"=>$request->email,"password"=>$request->password]); //compare , login
-        
+
        if($valid){
-        return redirect(url('index'));
+        return redirect(route('home'));
        }else{
-        return redirect(url('login'));
+        return redirect(route('loginForm'));
        }
 
     }
 
+    public function logout(){
+        Auth::logout();
+        return redirect(route('loginForm'));    }
 
 }

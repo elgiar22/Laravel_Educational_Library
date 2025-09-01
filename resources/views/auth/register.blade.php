@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Register</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
 body{
@@ -53,6 +54,7 @@ transition:0.3s;font-size:14px;
 
 body.dark .dark-toggle{background:#ffbb33;color:#333;}
 </style>
+
 </head>
 <body>
 <button class="dark-toggle" id="darkToggle">🌙 Dark</button>
@@ -61,12 +63,12 @@ body.dark .dark-toggle{background:#ffbb33;color:#333;}
 <h2>Register</h2>
 <form action="{{route('register')}}" method="post">
     @csrf
-<input type="text" placeholder="Username" name="name" value="{{ old('name', session('name', '')) }}">
+<input type="text" placeholder="Username" name="name" value="{{ old('name') }}">
 @error('name')
     <span class="error-msg">{{$message}}</span>
 @enderror
 
-<input type="email" placeholder="Email" name="email" value="{{ old('email', session('email', '')) }}">
+<input type="email" placeholder="Email" name="email" value="{{ old('email') }}">
 @error('email')
     <span class="error-msg">{{$message}}</span>
 @enderror

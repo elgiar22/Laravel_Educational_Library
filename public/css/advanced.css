@@ -1,0 +1,136 @@
+/* Advanced Features CSS */
+
+
+
+/* Enhanced Book Cards */
+.book-card.enhanced {
+    position: relative;
+    overflow: hidden;
+}
+
+.book-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+.rating {
+    background: rgba(255, 193, 7, 0.9);
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    backdrop-filter: blur(8px);
+}
+
+.book-stats {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* Enhanced Animations */
+.animate-in {
+    animation: slideInUp 0.6s ease forwards;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Parallax Effects */
+.hero {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Enhanced Loading States */
+.loading-skeleton {
+    background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Enhanced Mobile Experience */
+@media (max-width: 768px) {
+    .book-stats {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* Enhanced Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .animate-in,
+    .book-card,
+    .card-overlay {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* Enhanced Focus States */
+.book-card:focus-within {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+}
+
+
+
+/* Enhanced Dark Mode */
+
+/* Enhanced RTL Support */
+
+[data-lang="ar"] .book-badge {
+    right: auto;
+    left: 12px;
+}
+
+[data-lang="ar"] .book-stats {
+    flex-direction: row-reverse;
+}
+
+/* Enhanced Performance */
+.book-card {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+.card-image img {
+    will-change: transform;
+}
+
+/* Enhanced Hover Effects */
+.book-card:hover .book-badge {
+    transform: scale(1.1);
+}
+
+.book-card:hover .rating {
+    background: rgba(255, 193, 7, 1);
+}
+
+

@@ -5,7 +5,6 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,6 +22,8 @@ Route::controller(CategoryController::class)->group(function(){
 Route::get("categories",'all')->name("allCategories");
 Route::get("categories/show/{id}",'show')->name("showCategory");
 
+Route::middleware('auth')->group(function(){
+
 Route::get("categories/create",'create')->name("createCategory");
 Route::post("categories",'store')->name("storeCategory");
 
@@ -31,7 +32,7 @@ Route::put("categories/update/{id}",'update')->name("updateCategory");
 
 
 Route::delete("categories/{id}" ,"delete")->name("deleteCategory");
-
+});
 });
 
 
@@ -40,11 +41,9 @@ Route::delete("categories/{id}" ,"delete")->name("deleteCategory");
 
 Route::controller(BookController::class)->group(function(){
 
-
-
-
 Route::get("Books",'all')->name("allBooks");
 Route::get("Books/show/{id}",'show')->name("showBook");
+Route::middleware('auth')->group(function(){
 
 Route::get("Books/create",'create')->name("createBook");
 Route::post("Books",'store')->name("storeBook");
@@ -55,6 +54,7 @@ Route::put("Books/update/{id}",'update')->name("updateBook");
 
 Route::delete("Books/{id}" ,"delete")->name("deleteBook");
 
+});
 });
 
 // Auth
@@ -74,3 +74,4 @@ Route::post("logout" , "logout")->name('logout');
 
 
 });
+

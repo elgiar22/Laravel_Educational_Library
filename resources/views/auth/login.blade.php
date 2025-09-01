@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Login</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
 body{
@@ -54,6 +55,7 @@ transition:0.3s;font-size:14px;
 body.dark .dark-toggle{background:#ffbb33;color:#333;}
 
 </style>
+
 </head>
 <body>
 <button class="dark-toggle" id="darkToggle">🌙 Dark</button>
