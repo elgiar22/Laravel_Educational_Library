@@ -12,7 +12,7 @@ class CategoryController extends Controller
 
     public function all(){
         //select * from categories
-        $categories = Category::paginate(1) ;
+        $categories = Category::paginate(3) ;
         return view("categories.all",compact('categories'));
     }
 
@@ -86,11 +86,13 @@ class CategoryController extends Controller
         //check and delete
         $category = Category::findOrFail($id); 
         
-        Storage::delete($category->image);
+    if ($category->image) {
 
+        Storage::delete($category->image);
+    }
         $category->delete();
 
-        session()->flash("success",value: "data deleted successfuly");
+        session()->flash("success", "data deleted successfuly");
         
         return redirect(route('allCategories'));
         

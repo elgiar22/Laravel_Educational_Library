@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
 {
     public function all(){
-        $books = Book::paginate(1);
+        $books = Book::paginate(3);
         return view("Books.all",compact("books"));
     }   
 
@@ -88,9 +88,10 @@ class BookController extends Controller
     
     public function delete($id){
         $book = Book::findOrFail($id);
+    if ($book->image) {
 
         Storage::delete($book->image);
-
+    }
         $book->delete();
 
 

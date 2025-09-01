@@ -1,14 +1,19 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('index', [HomeController::class, 'index'])->name('home');
+
 // group 
 Route::controller(CategoryController::class)->group(function(){
 
@@ -49,5 +54,23 @@ Route::put("Books/update/{id}",'update')->name("updateBook");
 
 
 Route::delete("Books/{id}" ,"delete")->name("deleteBook");
+
+});
+
+// Auth
+
+Route::controller(AuthController::class)->group(function(){
+
+//register
+Route::get("register","registerForm")->name('registerForm');
+Route::post("register","register")->name('register');
+
+//login
+Route::get("login","loginForm")->name('loginForm');
+Route::post("login","login")->name('login');
+
+//logout
+Route::post("logout" , "logout")->name('logout');
+
 
 });
