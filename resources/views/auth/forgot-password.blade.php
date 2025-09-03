@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Forgot Password</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
@@ -79,6 +79,18 @@ body.dark .dark-toggle:hover{background:#ffaa00;}
   border-radius: 8px;
 }
 
+.description {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+body.dark .description {
+  color: #aaa;
+}
+
 </style>
 
 </head>
@@ -91,7 +103,8 @@ body.dark .dark-toggle:hover{background:#ffaa00;}
         <img src="https://img.icons8.com/color/96/000000/book-shelf.png" alt="Logo" title="Go to Home">
     </a>
 </div>
-<h2>Login</h2>
+<h2>Forgot Password</h2>
+<p class="description">Enter your email address and we'll send you a link to reset your password.</p>
 
 @if (session('status'))
     <div class="success-msg">
@@ -99,22 +112,17 @@ body.dark .dark-toggle:hover{background:#ffaa00;}
     </div>
 @endif
 
-<form action="{{route('login')}}" method="post">
+<form action="{{route('password.email')}}" method="post">
   @csrf
-<input type="email" placeholder="Email" name="email">
+<input type="email" placeholder="Email" name="email" value="{{ old('email') }}">
 @error('email')
     <span class="error-msg">{{$message}}</span>
 @enderror
-
-<input type="password" placeholder="Password" name="password">
-@error('password')
-    <span class="error-msg">{{$message}}</span>
-@enderror
  
-<button type="submit">Login</button>
+<button type="submit">Send Password Reset Link</button>
 </form>
-<a href="{{route('registerForm')}}">Don’t have an account? Register</a>
-<a href="{{route('password.request')}}">Forgot password?</a>
+<a href="{{route('loginForm')}}">Back to Login</a>
+<a href="{{route('registerForm')}}">Don't have an account? Register</a>
 </div>
 
 <script>

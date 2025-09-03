@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Reset Password</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif;}
@@ -67,16 +67,27 @@ body.dark .dark-toggle:hover{background:#ffaa00;}
   display: block;
 }
 
-.success-msg {
-  color: #4CAF50;
-  font-size: 13px;
-  margin-top: -8px;
-  margin-bottom: 8px;
-  display: block;
+.description {
   text-align: center;
-  padding: 10px;
-  background: rgba(76, 175, 80, 0.1);
-  border-radius: 8px;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+body.dark .description {
+  color: #aaa;
+}
+
+.password-requirements {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+body.dark .password-requirements {
+  color: #aaa;
 }
 
 </style>
@@ -91,30 +102,29 @@ body.dark .dark-toggle:hover{background:#ffaa00;}
         <img src="https://img.icons8.com/color/96/000000/book-shelf.png" alt="Logo" title="Go to Home">
     </a>
 </div>
-<h2>Login</h2>
+<h2>Reset Password</h2>
+<p class="description">Enter your new password below.</p>
 
-@if (session('status'))
-    <div class="success-msg">
-        {{ session('status') }}
-    </div>
-@endif
-
-<form action="{{route('login')}}" method="post">
+<form action="{{route('password.update')}}" method="post">
   @csrf
-<input type="email" placeholder="Email" name="email">
-@error('email')
-    <span class="error-msg">{{$message}}</span>
-@enderror
+  <input type="hidden" name="token" value="{{ $token }}">
+  
+  <input type="email" placeholder="Email" name="email" value="{{ $email ?? old('email') }}" readonly>
+  @error('email')
+      <span class="error-msg">{{$message}}</span>
+  @enderror
 
-<input type="password" placeholder="Password" name="password">
-@error('password')
-    <span class="error-msg">{{$message}}</span>
-@enderror
+  <input type="password" placeholder="New Password" name="password">
+  @error('password')
+      <span class="error-msg">{{$message}}</span>
+  @enderror
+  <div class="password-requirements">Password must be at least 8 characters long</div>
+
+  <input type="password" placeholder="Confirm New Password" name="password_confirmation">
  
-<button type="submit">Login</button>
+<button type="submit">Reset Password</button>
 </form>
-<a href="{{route('registerForm')}}">Don’t have an account? Register</a>
-<a href="{{route('password.request')}}">Forgot password?</a>
+<a href="{{route('loginForm')}}">Back to Login</a>
 </div>
 
 <script>
