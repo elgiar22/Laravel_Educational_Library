@@ -16,6 +16,7 @@
     <!-- Local CSS -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/advanced.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/shared.css') }}">
     
     <!-- Preload critical resources -->
     <link rel="preload" href="{{ asset('js/script.js') }}" as="script">
