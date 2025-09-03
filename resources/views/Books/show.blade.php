@@ -46,21 +46,33 @@
                 
                 @if($book->file_path)
                     <div class="book-actions">
-                        <a href="{{ asset('storage/' . $book->file_path) }}" target="_blank" class="btn btn-primary download-btn">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7,10 12,15 17,10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Download PDF
-                        </a>
-                        <a href="{{ asset('storage/' . $book->file_path) }}" target="_blank" class="btn btn-outline-primary">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                            Read Online
-                        </a>
+@auth
+    @if($book->file_path)
+        <a href="{{ route('downloadBook', $book) }}" class="btn btn-primary download-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7,10 12,15 17,10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download PDF
+        </a>
+    @endif
+@else
+    <a href="{{ route('loginForm') }}" class="btn btn-primary">
+        Login to Download
+    </a>
+@endauth
+
+@auth
+    <a href="{{ route('readBook', $book) }}" class="btn btn-outline-primary">
+        Read Online
+    </a>
+@else
+    <a href="{{ route('loginForm') }}" class="btn btn-outline-primary">
+        Login to Read
+    </a>
+@endauth
+
                     </div>
                 @endif
             </div>
@@ -113,27 +125,31 @@
                 </div>
 
                 @auth
-                    <div class="book-admin-actions">
-                        <a href="{{ route('editBook', $book->id) }}" class="btn btn-outline-primary">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            Edit Book
-                        </a>
-                        
-                        <form action="{{ route('deleteBook', $book->id) }}" method="post" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this book?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">
+                    @if(Auth::user()->canEditBook($book))
+                        <div class="book-admin-actions">
+                            <a href="{{ route('editBook', $book->id) }}" class="btn btn-outline-primary">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="3,6 5,6 21,6"></polyline>
-                                    <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                 </svg>
-                                Delete Book
-                            </button>
-                        </form>
-                    </div>
+                                Edit Book
+                            </a>
+                            
+                            @if(Auth::user()->canDeleteBook($book))
+                                <form action="{{ route('deleteBook', $book->id) }}" method="post" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this book?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                                        </svg>
+                                        Delete Book
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    @endif
                 @endauth
             </div>
         </div>

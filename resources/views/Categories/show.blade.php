@@ -72,6 +72,7 @@
                 </div>
 
                 @auth
+                @if(Auth::user()->canManageCategories())
                     <div class="category-admin-actions">
                         <a href="{{ route('editCategory', $category->id) }}" class="btn btn-outline-primary">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -93,6 +94,7 @@
                             </button>
                         </form>
                     </div>
+                @endif
                 @endauth
             </div>
         </div>
@@ -129,13 +131,15 @@
                                     View
                                 </button>
                                 @auth
-                                    <button class="overlay-btn edit-btn" onclick="window.location.href='{{ route('editBook', $book->id) }}'">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                        Edit
-                                    </button>
+                                    @if(Auth::user()->canEditBook($book))
+                                        <button class="overlay-btn edit-btn" onclick="window.location.href='{{ route('editBook', $book->id) }}'">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                    @endif
                                 @endauth
                             </div>
                         </div>
@@ -162,14 +166,36 @@
                                     {{ $book->created_at->format('M d, Y') }}
                                 </span>
                                 @if($book->file_path)
-                                    <a href="{{ asset('storage/' . $book->file_path) }}" target="_blank" class="download-link">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="7,10 12,15 17,10"></polyline>
-                                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                                        </svg>
-                                        PDF
-                                    </a>
+                                    @auth
+                                        @if(Auth::user()->canDownloadBooks())
+                                            <a href="{{ route('downloadBook', $book) }}" class="download-link">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                    <polyline points="7,10 12,15 17,10"></polyline>
+                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                </svg>
+                                                PDF
+                                            </a>
+                                        @else
+                                            <span class="download-link disabled">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                    <polyline points="7,10 12,15 17,10"></polyline>
+                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                                </svg>
+                                                No Permission
+                                            </span>
+                                        @endif
+                                    @else
+                                        <a href="{{ route('loginForm') }}" class="download-link">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                                <polyline points="7,10 12,15 17,10"></polyline>
+                                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                                            </svg>
+                                            Login to Download
+                                        </a>
+                                    @endauth
                                 @endif
                             </div>
                         </div>
@@ -187,6 +213,7 @@
                 <h3>No books in this category yet</h3>
                 <p>This category is empty. Be the first to add a book!</p>
                 @auth
+                @if(Auth::user()->canCreateBooks())
                     <a href="{{ route('createBook') }}" class="btn btn-primary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -194,8 +221,7 @@
                         </svg>
                         Add First Book
                     </a>
-                @else
-                    <a href="{{ route('loginForm') }}" class="btn btn-primary">Login to Add Books</a>
+                @endif
                 @endauth
             </div>
         @endif
@@ -467,6 +493,17 @@
         max-width: 250px;
         height: 200px;
     }
+}
+
+.download-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: var(--text-muted);
+}
+
+.download-link.disabled:hover {
+    color: var(--text-muted);
+    text-decoration: none;
 }
 
 @media (max-width: 480px) {

@@ -19,6 +19,18 @@ box-shadow:0 0 25px rgba(0,0,0,0.15);transition:0.5s;
 body.dark .container{background:#2c2c3c;}
 
 .container h2{text-align:center;margin-bottom:20px;}
+
+.logo{
+text-align:center;margin-bottom:25px;
+}
+.logo img{
+width:80px;height:80px;border-radius:50%;box-shadow:0 5px 15px rgba(0,0,0,0.2);
+transition:0.3s;
+}
+.logo img:hover{transform:scale(1.1);box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+body.dark .logo img{box-shadow:0 5px 15px rgba(255,255,255,0.1);}
+body.dark .logo img:hover{box-shadow:0 8px 25px rgba(255,255,255,0.2);}
+
 .container input{
 width:100%;padding:12px;margin:10px 0;border-radius:8px;
 border:1px solid #ccc;font-size:14px;outline:none;
@@ -41,8 +53,11 @@ background:#4a74f5;color:#fff;font-weight:bold;transition:0.3s;
 position:absolute;top:20px;right:20px;
 padding:8px 15px;border-radius:20px;border:none;
 background:#4a74f5;color:#fff;cursor:pointer;
-transition:0.3s;font-size:14px;
+transition:0.3s;font-size:14px;font-weight:bold;
 }
+.dark-toggle:hover{background:#3456c5;transform:scale(1.05);}
+body.dark .dark-toggle{background:#ffbb33;color:#333;}
+body.dark .dark-toggle:hover{background:#ffaa00;}
 
 .error-msg {
   color: #ff4d4d;
@@ -60,6 +75,11 @@ body.dark .dark-toggle{background:#ffbb33;color:#333;}
 <button class="dark-toggle" id="darkToggle">🌙 Dark</button>
 
 <div class="container">
+<div class="logo">
+    <a href="{{route('home')}}">
+        <img src="https://img.icons8.com/color/96/000000/book-shelf.png" alt="Logo" title="Go to Home">
+    </a>
+</div>
 <h2>Register</h2>
 <form action="{{route('register')}}" method="post">
     @csrf

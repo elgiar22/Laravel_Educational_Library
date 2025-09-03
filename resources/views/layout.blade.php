@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,7 +52,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
-<body>
+<body data-theme="light">
    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
@@ -66,8 +66,193 @@
             </div>
             </a>
             <div class="nav-center">
-                <!-- Search functionality removed -->
+                <form action="{{ route('search') }}" method="GET" class="navbar-search">
+                    <input type="text" name="q" placeholder="Search books..." value="{{ request('q') }}">
+                    <button type="submit">🔍</button>
+                </form>
             </div>
+
+<style>
+/* Simple Navbar Search */
+.nav-center {
+    flex: 1;
+    max-width: 350px;
+    margin: 0 20px;
+}
+
+.navbar-search {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.navbar-search:hover {
+    border-color: var(--accent-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.navbar-search:focus-within {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.navbar-search input {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.navbar-search input::placeholder {
+    color: var(--text-muted);
+}
+
+.navbar-search input:focus::placeholder {
+    color: var(--text-secondary);
+}
+
+.navbar-search button {
+    padding: 10px 12px;
+    border: none;
+    background: var(--accent-primary);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-search button:hover {
+    background: var(--accent-secondary);
+    transform: scale(1.05);
+}
+
+/* Enhanced Dark Toggle Button - Login Style */
+.dark-toggle {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: none;
+    background: #4a74f5;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.dark-toggle:hover {
+    background: #3456c5;
+    transform: scale(1.05);
+}
+
+/* Nav Links Enhancement */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: var(--accent-primary);
+    background: rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    color: var(--accent-primary);
+    background: rgba(59, 130, 246, 0.15);
+}
+
+/* Mobile Menu Enhancement */
+.mobile-menu .mobile-link {
+    display: block;
+    padding: 12px 20px;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.mobile-menu .mobile-link:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-primary);
+}
+
+/* Dark mode styles for the toggle button */
+body.dark .dark-toggle {
+    background: #ffbb33;
+    color: #333;
+}
+
+body.dark .dark-toggle:hover {
+    background: #ffaa00;
+}
+
+/* Dark mode general styles */
+body.dark {
+    background: #1e1e2f;
+    color: #ddd;
+}
+
+/* Hide on mobile */
+@media (max-width: 768px) {
+    .nav-center {
+        display: none;
+    }
+    
+    .dark-toggle {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .nav-center {
+        max-width: 280px;
+    }
+    
+    .navbar-search input {
+        font-size: 13px;
+    }
+    
+    .navbar-search button {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+}
+
+/* Remove the old toggle styles */
+.toggle-icon, .toggle-text {
+    display: none;
+}
+</style>
 
             <div class="nav-actions">
 
@@ -80,12 +265,21 @@
                     @endguest
 
                     @auth
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
+                        @elseif(Auth::user()->canCreateBooks())
+                            <a href="{{ route('mybooks') }}" class="nav-link">My Books</a>
+                        @endif
                         <form action="{{ url('logout') }}" method="post" class="logout-form">
                             @csrf
                             <button type="submit" class="btn btn-outline">Logout</button>
                         </form>
                     @endauth
                 </div>
+
+                <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
+                    🌙 Dark
+                </button>
 
                 <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -107,6 +301,11 @@
             @endguest
 
             @auth
+                @if(Auth::user()->isAdmin())
+                    <a href="{{ route('dashboard') }}" class="mobile-link">Dashboard</a>
+                @elseif(Auth::user()->canCreateBooks())
+                    <a href="{{ route('mybooks') }}" class="mobile-link">My Books</a>
+                @endif
                 <form action="{{ url('logout') }}" method="post">
                     @csrf
                     <button type="submit" class="btn btn-outline mobile-logout">Logout</button>
@@ -117,36 +316,7 @@
   
     @yield('content')
 
-    <!-- Floating Action Button -->
-    @auth
-    <div class="fab-container">
-        <button class="fab" id="fabButton" onclick="toggleFabMenu()" aria-label="Quick actions">
-            <svg class="fab-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-        </button>
-        <div class="fab-menu" id="fabMenu">
-            <button class="fab-option" onclick="openAddBookModal()" data-tooltip="Add Book" aria-label="Add new book">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </button>
-            <button class="fab-option" onclick="openAddCategoryModal()" data-tooltip="Add Category" aria-label="Add new category">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 3h18v18H3zM21 9H3M21 15H3M12 3v18"/>
-                </svg>
-            </button>
-            <button class="fab-option" onclick="openManageModal()" data-tooltip="Manage Library" aria-label="Manage library">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 20h9"></path>
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                </svg>
-            </button>
-        </div>
-    </div>
-    @endauth
+
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -163,19 +333,44 @@
     <script src="{{ asset('js/script.js') }}"></script>
     @yield('js')
     
-    <!-- Service Worker Registration -->
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then((registration) => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch((registrationError) => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
-    </script>
+document.addEventListener('DOMContentLoaded', function() {
+    const body = document.body;
+    const darkToggle = document.getElementById('darkToggle');
+
+    // Check localStorage on page load
+    if (localStorage.getItem("theme") === "dark") {
+        body.classList.add("dark");
+        body.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-theme", "dark");
+        darkToggle.textContent = "☀ Light";
+    } else {
+        body.classList.remove("dark");
+        body.setAttribute("data-theme", "light");
+        document.documentElement.setAttribute("data-theme", "light");
+        darkToggle.textContent = "🌙 Dark";
+    }
+
+    // Toggle theme on button click
+    if (darkToggle) {
+        darkToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            
+            if (body.classList.contains('dark')) {
+                localStorage.setItem("theme", "dark");
+                body.setAttribute("data-theme", "dark");
+                document.documentElement.setAttribute("data-theme", "dark");
+                darkToggle.textContent = "☀ Light";
+            } else {
+                localStorage.setItem("theme", "light");
+                body.setAttribute("data-theme", "light");
+                document.documentElement.setAttribute("data-theme", "light");
+                darkToggle.textContent = "🌙 Dark";
+            }
+        });
+    }
+});
+</script>
+
 </body>
 </html>

@@ -5,14 +5,85 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
+
+public function authorBooks()
+{
+    $user = auth()->user();
+
+    $books = $user->books()->with('category')->latest()->get();
+
+    return view('Books/mybooks', compact('books'));
+}
+
+
+
+
     public function all(){
         $books = Book::paginate(3);
         return view("Books.all",compact("books"));
-    }   
+    }
+
+    public function search(Request $request){
+        $query = $request->get('q', '');
+        $category_id = $request->get('category', '');
+        $sort = $request->get('sort', 'newest');
+        
+        // If no search query, redirect to home
+        if (empty($query)) {
+            return redirect()->route('home');
+        }
+        
+        // Get all categories for filter dropdown
+        $categories = Category::all();
+        
+        // Build the search query
+        $booksQuery = Book::with(['category', 'user']);
+        
+        // Apply search filter - search in title, description, and author name
+        $booksQuery->where(function($q) use ($query) {
+            $q->where('title', 'LIKE', "%{$query}%")
+              ->orWhere('desc', 'LIKE', "%{$query}%")
+              ->orWhereHas('user', function($userQuery) use ($query) {
+                  $userQuery->where('name', 'LIKE', "%{$query}%");
+              });
+        });
+        
+        // Apply category filter if selected
+        if (!empty($category_id)) {
+            $booksQuery->where('category_id', $category_id);
+        }
+        
+        // Apply sorting
+        switch($sort) {
+            case 'oldest':
+                $booksQuery->orderBy('created_at', 'asc');
+                break;
+            case 'title':
+                $booksQuery->orderBy('title', 'asc');
+                break;
+            case 'newest':
+            default:
+                $booksQuery->orderBy('created_at', 'desc');
+                break;
+        }
+        
+        // Get paginated results
+        $books = $booksQuery->paginate(6)->appends($request->all());
+        
+        // Return view with all required variables
+        return view('search', [
+            'books' => $books,
+            'query' => $query,
+            'categories' => $categories,
+            'category_id' => $category_id,
+            'sort' => $sort
+        ]);
+    }
 
     public function show($id){
         $book = Book::findOrFail($id);
@@ -39,8 +110,8 @@ class BookController extends Controller
             $data['image'] = Storage::putFile("books",$request->image);
             $data['file_path'] = Storage::putFile("files",$request->file_path);
 
-            $data['user_id'] = 1; //ererrr
-            // $data['user_id'] = auth()->id();
+    
+            $data['user_id'] = auth()->id();
             Book::create($data);
             session()->flash("success","data inserted successfuly");
             //redirect all
@@ -50,10 +121,14 @@ class BookController extends Controller
 
         public function edit($id){
         $book = Book::findOrFail($id);
-        $categories = Category::all();
-
-        return view ("books.edit",compact("book" , "categories"));
         
+        // Check if user can edit this book
+        if (!auth()->user()->canEditBook($book)) {
+            abort(403, 'Unauthorized action. You can only edit your own books.');
+        }
+        
+        $categories = Category::all();
+        return view ("books.edit",compact("book" , "categories"));
     }
 
      public function update($id , Request $request){
@@ -68,6 +143,11 @@ class BookController extends Controller
 
             //check and update
             $book = Book::findOrFail($id);
+
+            // Check if user can edit this book
+            if (!auth()->user()->canEditBook($book)) {
+                abort(403, 'Unauthorized action. You can only edit your own books.');
+            }
 
             if($request->has('image')){
                 //delete old image
@@ -101,23 +181,68 @@ class BookController extends Controller
     
     public function delete($id){
         $book = Book::findOrFail($id);
-    if ($book->image) {
+        
+        // Check if user can delete this book
+        if (!auth()->user()->canDeleteBook($book)) {
+            abort(403, 'Unauthorized action. You can only delete your own books.');
+        }
+        
+        if ($book->image) {
+            Storage::delete($book->image);
+        }
 
-        Storage::delete($book->image);
-    }
-
-    if ($book->file_path) {
-
-        Storage::delete($book->file_path);
-    }
+        if ($book->file_path) {
+            Storage::delete($book->file_path);
+        }
+        
         $book->delete();
-
 
         session()->flash("success",value: "data deleted successfuly");
         
         return redirect(route('allBooks'));
-    
-    
     }
+
+public function download(Book $book)
+{
+    // Check if user can download books
+    if (!auth()->check() || !auth()->user()->canDownloadBooks()) {
+        abort(403, 'You must be logged in to download books.');
+    }
+
+    // Check if file_path exists
+    if (!$book->file_path) {
+        abort(404, 'File not found!');
+    }
+
+    $filePath = public_path('storage/' . $book->file_path);
+
+    if (!file_exists($filePath)) {
+        abort(404, 'File not found!');
+    }
+
+    return response()->download($filePath, $book->title . '.pdf');
+}
+
+public function read(Book $book)
+{
+    // Check if user can read books
+    if (!auth()->check() || !auth()->user()->canReadBooks()) {
+        return redirect()->route('loginForm')->with('error', 'You must be logged in to read books.');
+    }
+
+    // Check if file_path exists
+    if (!$book->file_path) {
+        abort(404, 'File not found!');
+    }
+
+    $filePath = public_path('storage/' . $book->file_path);
+
+    if (!file_exists($filePath)) {
+        abort(404, 'File not found!');
+    }
+
+    return response()->file($filePath);
+}
+
 
 }

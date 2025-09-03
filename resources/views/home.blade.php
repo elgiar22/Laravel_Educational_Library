@@ -62,22 +62,14 @@
                                 </div>
                             @endif
                             <div class="card-overlay">
-                                <button class="overlay-btn view-btn" onclick="window.location.href='{{ route('showBook', $book->id) }}'">
+                                <button class="btn btn-primary" onclick="window.location.href='{{ route('showBook', $book->id) }}'">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                     View
                                 </button>
-                                @auth
-                                    <button class="overlay-btn edit-btn" onclick="window.location.href='{{ route('editBook', $book->id) }}'">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                        Edit
-                                    </button>
-                                @endauth
+                            
                             </div>
                         </div>
                         <div class="card-content">
@@ -110,16 +102,7 @@
                                     </svg>
                                     {{ $book->created_at->format('M d, Y') }}
                                 </span>
-                                @if($book->file_path)
-                                    <a href="{{ asset('storage/' . $book->file_path) }}" target="_blank" class="download-link">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                            <polyline points="7,10 12,15 17,10"></polyline>
-                                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                                        </svg>
-                                        PDF
-                                    </a>
-                                @endif
+
                             </div>
                         </div>
                     </div>
@@ -129,20 +112,20 @@
                             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            </svg>ئ
+                            </svg>
                         </div>
                         <h3>No books available yet</h3>
                         <p>Be the first to add a book to our digital library!</p>
                         @auth
-                            <a href="{{ route('createBook') }}" class="btn btn-primary">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                                Add First Book
-                            </a>
-                        @else
-                            <a href="{{ route('loginForm') }}" class="btn btn-primary">Login to Add Books</a>
+                            @if(Auth::user()->canCreateBooks())
+                                <a href="{{ route('createBook') }}" class="btn btn-primary">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Add First Book
+                                </a>
+                            @endif
                         @endauth
                     </div>
                 @endforelse
@@ -182,22 +165,14 @@
                                 </div>
                             @endif
                             <div class="card-overlay">
-                                <button class="overlay-btn browse-btn" onclick="window.location.href='{{ route('showCategory', $category->id) }}'">
+                                <button class="btn btn-primary" onclick="window.location.href='{{ route('showCategory', $category->id) }}'">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                     Browse
                                 </button>
-                                @auth
-                                    <button class="overlay-btn edit-btn" onclick="window.location.href='{{ route('editCategory', $category->id) }}'">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                        </svg>
-                                        Edit
-                                    </button>
-                                @endauth
+
                             </div>
                         </div>
                         <div class="card-content">
@@ -222,17 +197,17 @@
                             </svg>
                         </div>
                         <h3>No categories available yet</h3>
-                        <p>Create the first category to organize your books!</p>
                         @auth
-                            <a href="{{ route('createCategory') }}" class="btn btn-primary">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                                Create First Category
-                            </a>
-                        @else
-                            <a href="{{ route('loginForm') }}" class="btn btn-primary">Login to Create Categories</a>
+                            @if(Auth::user()->canManageCategories())
+                                <a href="{{ route('createCategory') }}" class="btn btn-primary">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Create First Category
+                                </a>
+
+                            @endif
                         @endauth
                     </div>
                 @endforelse
@@ -283,7 +258,7 @@
                             <circle cx="9" cy="7" r="4"></circle>
                         </svg>
                     </div>
-                    <h3 class="stat-number" data-target="50">50+</h3>
+                    <h3 class="stat-number" data-target="{{ $authorCount }}">{{ $authorCount }}</h3>
                     <p class="stat-label">Authors</p>
                 </div>
             </div>

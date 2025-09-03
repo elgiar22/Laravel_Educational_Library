@@ -25,13 +25,11 @@ class AuthController extends Controller
 
         $user = User::create($data);
 
-        // => login
-        return view('auth.login');
-
-        //=> website
-
-        // Auth::login($user);
-        // return redirect(url('books'));
+        // Auto login after registration
+        Auth::login($user);
+        
+        session()->flash('success', 'Registration successful! Welcome to our library.');
+        return redirect(route('home'));
 
     }
 
@@ -55,8 +53,10 @@ class AuthController extends Controller
         $valid = Auth::attempt(["email"=>$request->email,"password"=>$request->password]); //compare , login
 
        if($valid){
+        session()->flash('success', 'Welcome back!');
         return redirect(route('home'));
        }else{
+        session()->flash('error', 'Invalid credentials. Please try again.');
         return redirect(route('loginForm'));
        }
 
@@ -64,6 +64,12 @@ class AuthController extends Controller
 
     public function logout(){
         Auth::logout();
-        return redirect(route('loginForm'));    }
+        return redirect(route('loginForm'));   
+    }
+
+    public function allUsers(){
+        $users = User::all();
+        dd($users);
+    }
 
 }
