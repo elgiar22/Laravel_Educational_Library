@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -18,12 +19,11 @@ class AuthController extends Controller
 
     public function register(Request $request){
 
-        // validation 
-
+        // Enhanced validation with security rules
         $data = $request->validate([
-        "name"=>"required|string|max:200",
-        "email"=>"required|email|max:255",
-        "password"=>"required|string|min:8|confirmed",
+        "name"=>"required|string|max:200|regex:/^[a-zA-Z\s]+$/",
+        "email"=>"required|email|max:255|unique:users,email",
+        "password"=>"required|string|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/",
         ]);
         $data['password'] = bcrypt($request->password);
 
@@ -31,6 +31,13 @@ class AuthController extends Controller
 
         // Auto login after registration
         Auth::login($user);
+        
+        Log::info('New user registered', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
         
         session()->flash('success', 'Registration successful! Welcome to our library.');
         return redirect(route('home'));
@@ -57,9 +64,20 @@ class AuthController extends Controller
         $valid = Auth::attempt(["email"=>$request->email,"password"=>$request->password]); //compare , login
 
        if($valid){
+        Log::info('User logged in successfully', [
+            'user_id' => Auth::id(),
+            'email' => $data['email'],
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
         session()->flash('success', 'Welcome back!');
         return redirect(route('home'));
        }else{
+        Log::warning('Failed login attempt', [
+            'email' => $data['email'],
+            'ip' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
         session()->flash('error', 'Invalid credentials. Please try again.');
         return redirect(route('loginForm'));
        }
@@ -67,13 +85,14 @@ class AuthController extends Controller
     }
 
     public function logout(){
+        $user = Auth::user();
+        Log::info('User logged out', [
+            'user_id' => $user ? $user->id : null,
+            'email' => $user ? $user->email : null,
+            'ip' => request()->ip()
+        ]);
         Auth::logout();
         return redirect(route('loginForm'));   
-    }
-
-    public function allUsers(){
-        $users = User::all();
-        dd($users);
     }
 
     // Password Reset Methods
@@ -91,6 +110,18 @@ class AuthController extends Controller
         $status = Password::sendResetLink(
             $request->only('email')
         );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            Log::info('Password reset link sent', [
+                'email' => $request->email,
+                'ip' => request()->ip()
+            ]);
+        } else {
+            Log::warning('Password reset link failed', [
+                'email' => $request->email,
+                'ip' => request()->ip()
+            ]);
+        }
 
         return $status === Password::RESET_LINK_SENT
                     ? back()->with(['status' => __($status)])

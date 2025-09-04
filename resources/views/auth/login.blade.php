@@ -28,8 +28,10 @@ width:80px;height:80px;border-radius:50%;box-shadow:0 5px 15px rgba(0,0,0,0.2);
 transition:0.3s;
 }
 .logo img:hover{transform:scale(1.1);box-shadow:0 8px 25px rgba(0,0,0,0.3);}
-body.dark .logo img{box-shadow:0 5px 15px rgba(255,255,255,0.1);}
-body.dark .logo img:hover{box-shadow:0 8px 25px rgba(255,255,255,0.2);}
+body.dark .logo h1,
+body.dark .logo p {
+    color: #ffbb33 !important;
+}
 
 .container input{
 width:100%;padding:12px;margin:10px 0;border-radius:8px;
@@ -46,8 +48,10 @@ background:#4a74f5;color:#fff;font-weight:bold;transition:0.3s;
 }
 .container button:hover{background:#3456c5;}
 
+.logo a {
+    text-decoration: none;
+}
 .container a{display:block;text-align:center;margin-top:10px;color:#4a74f5;text-decoration:none;font-size:13px;}
-.container a:hover{text-decoration:underline;}
 
 .dark-toggle{
 position:absolute;top:20px;right:20px;
@@ -88,7 +92,8 @@ body.dark .dark-toggle:hover{background:#ffaa00;}
 <div class="container">
 <div class="logo">
     <a href="{{route('home')}}">
-        <img src="https://img.icons8.com/color/96/000000/book-shelf.png" alt="Logo" title="Go to Home">
+        <h1 style="font-size: 3.5rem; color: #4a74f5; margin: 0; font-weight: bold;">📚</h1>
+        <p style="margin: 5px 0 0 0; color: #4a74f5; font-weight: 600; font-size: 1.5rem;">Library</p>
     </a>
 </div>
 <h2>Login</h2>
@@ -114,6 +119,8 @@ body.dark .dark-toggle:hover{background:#ffaa00;}
 <button type="submit">Login</button>
 </form>
 <a href="{{route('registerForm')}}">Don’t have an account? Register</a>
+
+
 <a href="{{route('password.request')}}">Forgot password?</a>
 </div>
 

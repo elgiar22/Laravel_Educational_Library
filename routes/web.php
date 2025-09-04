@@ -6,6 +6,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -100,5 +101,31 @@ Route::controller(AuthController::class)->group(function(){
     Route::post('forgot-password', 'sendResetLinkEmail')->name('password.email');
     Route::get('reset-password/{token}', 'showResetPasswordForm')->name('password.reset');
     Route::post('reset-password', 'resetPassword')->name('password.update');
+})->middleware('throttle:6,1'); // Rate limiting: 6 requests per minute
+
+// Enhanced Rate Limiting for sensitive operations
+Route::post('/request-author', [UserController::class, 'requestAuthor'])
+    ->name( 'request.author')
+    ->middleware(['auth', 'throttle:3,1']); // 3 requests per minute for author requests
+
+Route::middleware(['auth', 'isAdmin'])->group(function () {
+    Route::post('/admin/author-requests/{user}/approve', [AdminController::class, 'approveAuthor'])
+        ->name('admin.author.approve')
+        ->middleware('throttle:10,1'); // 10 requests per minute for admin actions
+
+    Route::post('/admin/author-requests/{user}/reject', [AdminController::class, 'rejectAuthor'])
+        ->name('admin.author.reject')
+        ->middleware('throttle:10,1');
+
+    Route::get('/admin/notifications', [AdminController::class, 'notifications'])
+        ->name('admin.notifications');
+
+    Route::post('/admin/notifications/{id}/mark-read', [AdminController::class, 'markNotificationAsRead'])
+        ->name('admin.notifications.mark-read');
+
+    Route::delete('/admin/notifications/{id}', [AdminController::class, 'deleteNotification'])
+        ->name('admin.notifications.delete');
 });
+
+
 

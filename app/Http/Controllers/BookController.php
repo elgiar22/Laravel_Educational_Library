@@ -7,13 +7,14 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
 
-public function authorBooks()
+    public function authorBooks()
 {
-    $user = auth()->user();
+    $user = Auth::user();
 
     $books = $user->books()->with('category')->latest()->get();
 
@@ -46,10 +47,10 @@ public function authorBooks()
         
         // Apply search filter - search in title, description, and author name
         $booksQuery->where(function($q) use ($query) {
-            $q->where('title', 'LIKE', "%{$query}%")
-              ->orWhere('desc', 'LIKE', "%{$query}%")
+            $q->where('title', 'LIKE', '%' . addslashes($query) . '%')
+              ->orWhere('desc', 'LIKE', '%' . addslashes($query) . '%')
               ->orWhereHas('user', function($userQuery) use ($query) {
-                  $userQuery->where('name', 'LIKE', "%{$query}%");
+                  $userQuery->where('name', 'LIKE', '%' . addslashes($query) . '%');
               });
         });
         
@@ -75,6 +76,14 @@ public function authorBooks()
         // Get paginated results
         $books = $booksQuery->paginate(6)->appends($request->all());
         
+        Log::info('Book search performed', [
+            'query' => $query,
+            'category_id' => $category_id,
+            'sort' => $sort,
+            'results_count' => $books->count(),
+            'ip' => request()->ip()
+        ]);
+        
         // Return view with all required variables
         return view('search', [
             'books' => $books,
@@ -87,6 +96,14 @@ public function authorBooks()
 
     public function show($id){
         $book = Book::findOrFail($id);
+        
+        Log::info('Book viewed', [
+            'book_id' => $book->id,
+            'book_title' => $book->title,
+            'user_id' => Auth::id(),
+            'ip' => request()->ip()
+        ]);
+        
         return view("Books.show",compact("book"));
     }
 
@@ -102,7 +119,7 @@ public function authorBooks()
                 'title'=>'required|string|max:200',
                 'desc'=>'required|string',
                 'image' =>'required|image|mimes:png,jpg,jpeg,gif',
-                'file_path' => 'required|file|mimes:pdf|max:100240',
+                'file_path' => 'required|file|mimes:pdf|max:10240', // Reduced from 100MB to 10MB
                 'category_id'=>'required|numeric|exists:categories,id'
             ]);
         //store 
@@ -111,8 +128,17 @@ public function authorBooks()
             $data['file_path'] = Storage::putFile("files",$request->file_path);
 
     
-            $data['user_id'] = auth()->id();
-            Book::create($data);
+            $data['user_id'] = Auth::id();
+            $book = Book::create($data);
+            
+            Log::info('Book created', [
+                'book_id' => $book->id,
+                'book_title' => $book->title,
+                'user_id' => Auth::id(),
+                'category_id' => $book->category_id,
+                'ip' => request()->ip()
+            ]);
+            
             session()->flash("success","data inserted successfuly");
             //redirect all
             return redirect(route('allBooks'));
@@ -123,7 +149,13 @@ public function authorBooks()
         $book = Book::findOrFail($id);
         
         // Check if user can edit this book
-        if (!auth()->user()->canEditBook($book)) {
+        if (!Auth::user()->canEditBook($book)) {
+            Log::warning('Unauthorized book edit attempt', [
+                'user_id' => Auth::id(),
+                'book_id' => $book->id,
+                'book_owner_id' => $book->user_id,
+                'ip' => request()->ip()
+            ]);
             abort(403, 'Unauthorized action. You can only edit your own books.');
         }
         
@@ -137,7 +169,7 @@ public function authorBooks()
                 'title'=>'required|string|max:200',
                 'desc'=>'required|string',
                 'image' =>'image|mimes:png,jpg,jpeg,gif',
-                'file_path' => 'file|mimes:pdf|max:100240',
+                'file_path' => 'file|mimes:pdf|max:10240', // Reduced from 100MB to 10MB
                 'category_id'=>'required|numeric|exists:categories,id'
             ]);
 
@@ -146,6 +178,12 @@ public function authorBooks()
 
             // Check if user can edit this book
             if (!auth()->user()->canEditBook($book)) {
+                Log::warning('Unauthorized book update attempt', [
+                    'user_id' => Auth::id(),
+                    'book_id' => $book->id,
+                    'book_owner_id' => $book->user_id,
+                    'ip' => request()->ip()
+                ]);
                 abort(403, 'Unauthorized action. You can only edit your own books.');
             }
 
@@ -171,6 +209,13 @@ public function authorBooks()
 
             $book->update($data);
 
+            Log::info('Book updated', [
+                'book_id' => $book->id,
+                'book_title' => $book->title,
+                'user_id' => Auth::id(),
+                'ip' => request()->ip()
+            ]);
+
             session()->flash("success",value: "data updated successfuly");
 
             return redirect(route('showBook',$id));
@@ -184,8 +229,21 @@ public function authorBooks()
         
         // Check if user can delete this book
         if (!auth()->user()->canDeleteBook($book)) {
+            Log::warning('Unauthorized book deletion attempt', [
+                'user_id' => Auth::id(),
+                'book_id' => $book->id,
+                'book_owner_id' => $book->user_id,
+                'ip' => request()->ip()
+            ]);
             abort(403, 'Unauthorized action. You can only delete your own books.');
         }
+        
+        Log::alert('Book deleted', [
+            'book_id' => $book->id,
+            'book_title' => $book->title,
+            'user_id' => Auth::id(),
+            'ip' => request()->ip()
+        ]);
         
         if ($book->image) {
             Storage::delete($book->image);

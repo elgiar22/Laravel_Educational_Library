@@ -266,10 +266,23 @@ body.dark {
                     @endguest
 
                     @auth
-                        @if(Auth::user()->isAdmin())
+                        @if(Auth::user() && Auth::user()->isAdmin())
                             <a href="{{ route('dashboard') }}" class="nav-link">Dashboard</a>
-                        @elseif(Auth::user()->canCreateBooks())
+                        @elseif(Auth::user() && Auth::user()->canCreateBooks())
                             <a href="{{ route('mybooks') }}" class="nav-link">My Books</a>
+                        @elseif(Auth::user() && Auth::user()->role === 'user')
+                            <form action="{{ route('request.author') }}" method="POST" class="request-author-form">
+                                @csrf
+                                <button type="submit" class="nav-link request-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    Request Author
+                                </button>
+                            </form>
                         @endif
                         <form action="{{ url('logout') }}" method="post" class="logout-form">
                             @csrf
@@ -302,10 +315,23 @@ body.dark {
             @endguest
 
             @auth
-                @if(Auth::user()->isAdmin())
+                @if(Auth::user() && Auth::user()->isAdmin())
                     <a href="{{ route('dashboard') }}" class="mobile-link">Dashboard</a>
-                @elseif(Auth::user()->canCreateBooks())
+                @elseif(Auth::user() && Auth::user()->canCreateBooks())
                     <a href="{{ route('mybooks') }}" class="mobile-link">My Books</a>
+                @elseif(Auth::user() && Auth::user()->role === 'user')
+                    <form action="{{ route('request.author') }}" method="POST" class="mobile-request-form">
+                        @csrf
+                        <button type="submit" class="mobile-link request-mobile-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            Request Author
+                        </button>
+                    </form>
                 @endif
                 <form action="{{ url('logout') }}" method="post">
                     @csrf

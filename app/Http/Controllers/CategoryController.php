@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
@@ -20,6 +22,14 @@ class CategoryController extends Controller
     public function show($id){
         //select * from categories where id=$id
         $category = Category::findOrFail($id);
+        
+        Log::info('Category viewed', [
+            'category_id' => $category->id,
+            'category_name' => $category->name,
+            'user_id' => Auth::id(),
+            'ip' => request()->ip()
+        ]);
+        
         return view("Categories.show",compact('category'));
 
     }
@@ -39,7 +49,15 @@ class CategoryController extends Controller
         //store 
     
             $data['image'] = Storage::putFile("categories",$request->image);        
-            Category::create($data);
+            $category = Category::create($data);
+            
+            Log::info('Category created', [
+                'category_id' => $category->id,
+                'category_name' => $category->name,
+                'user_id' => Auth::id(),
+                'ip' => request()->ip()
+            ]);
+            
             session()->flash("success","data inserted successfuly");
 
             //redirect all
@@ -76,6 +94,13 @@ class CategoryController extends Controller
 
             $category->update($data);
 
+            Log::info('Category updated', [
+                'category_id' => $category->id,
+                'category_name' => $category->name,
+                'user_id' => Auth::id(),
+                'ip' => request()->ip()
+            ]);
+
             session()->flash("success",value: "data updated successfuly");
 
             return redirect(route('showCategory',$id));
@@ -86,6 +111,13 @@ class CategoryController extends Controller
     public function delete($id ){
         //check and delete
         $category = Category::findOrFail($id); 
+        
+        Log::alert('Category deleted', [
+            'category_id' => $category->id,
+            'category_name' => $category->name,
+            'user_id' => Auth::id(),
+            'ip' => request()->ip()
+        ]);
         
     if ($category->image) {
 

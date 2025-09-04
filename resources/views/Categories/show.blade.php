@@ -123,24 +123,13 @@
                                 </div>
                             @endif
                             <div class="card-overlay">
-                                <button class="overlay-btn view-btn" onclick="window.location.href='{{ route('showBook', $book->id) }}'">
+                                <button class="btn btn-primary" onclick="window.location.href='{{ route('showBook', $book->id) }}'">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                     View
                                 </button>
-                                @auth
-                                    @if(Auth::user()->canEditBook($book))
-                                        <button class="overlay-btn edit-btn" onclick="window.location.href='{{ route('editBook', $book->id) }}'">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                            </svg>
-                                            Edit
-                                        </button>
-                                    @endif
-                                @endauth
                             </div>
                         </div>
                         <div class="card-content">
@@ -165,38 +154,7 @@
                                     </svg>
                                     {{ $book->created_at->format('M d, Y') }}
                                 </span>
-                                @if($book->file_path)
-                                    @auth
-                                        @if(Auth::user()->canDownloadBooks())
-                                            <a href="{{ route('downloadBook', $book) }}" class="download-link">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                                    <polyline points="7,10 12,15 17,10"></polyline>
-                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                                </svg>
-                                                PDF
-                                            </a>
-                                        @else
-                                            <span class="download-link disabled">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                                    <polyline points="7,10 12,15 17,10"></polyline>
-                                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                                </svg>
-                                                No Permission
-                                            </span>
-                                        @endif
-                                    @else
-                                        <a href="{{ route('loginForm') }}" class="download-link">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                                <polyline points="7,10 12,15 17,10"></polyline>
-                                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                                            </svg>
-                                            Login to Download
-                                        </a>
-                                    @endauth
-                                @endif
+                               
                             </div>
                         </div>
                     </div>

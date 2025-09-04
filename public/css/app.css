@@ -246,6 +246,37 @@ body {
     align-items: center;
 }
 
+.request-author-form {
+    display: flex;
+    align-items: center;
+}
+
+.request-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.request-btn:hover {
+    color: var(--accent-primary);
+}
+
+.request-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
 .mobile-menu-btn {
     display: none;
     background: none;
@@ -294,6 +325,38 @@ body {
 
 .mobile-logout {
     margin-top: 8px;
+}
+
+.mobile-request-form {
+    display: flex;
+    align-items: center;
+}
+
+.request-mobile-btn {
+    background: none;
+    border: none;
+    padding: 12px 0;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    width: 100%;
+    text-align: left;
+}
+
+.request-mobile-btn:hover {
+    color: var(--accent-primary);
+}
+
+.request-mobile-btn svg {
+    width: 16px;
+    height: 16px;
 }
 
 /* Buttons */

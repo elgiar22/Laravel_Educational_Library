@@ -116,16 +116,92 @@ After running the seeders, you'll have these default users:
 - **Author**: author@example.com / password
 - **User**: user@example.com / password
 
+## 🚀 **Development**
+
+### **Running Tests**
+```bash
+php artisan test
+```
+
+### **Code Quality**
+```bash
+# Laravel Pint (Code Style)
+./vendor/bin/pint
+
+# PHPStan (Static Analysis)
+./vendor/bin/phpstan analyse
+```
+
+### **Security Audit**
+```bash
+# Check for security vulnerabilities
+composer audit
+
+# Update dependencies
+composer update
+```
+
+## 📊 **Security Logging**
+
+The system includes comprehensive security logging for:
+- User authentication (login/logout)
+- Failed login attempts
+- Book operations (create/edit/delete)
+- Category operations
+- Admin actions (role changes, user management)
+- Author requests
+- Unauthorized access attempts
+
+All logs include IP addresses, user agents, and timestamps for security monitoring.
+
+## 🤝 **Contributing**
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### **Security Guidelines**
+- Follow OWASP Top 10 2021 guidelines
+- Implement proper input validation
+- Use prepared statements for database queries
+- Log all security-relevant events
+- Test thoroughly before submitting PRs
+
 ## 🛠️ **Technology Stack**
 
 - **Backend**: Laravel 12
 - **Frontend**: Blade Templates, Bootstrap 5
 - **Database**: MySQL/PostgreSQL
-- **Authentication**: Custom Auth System
-- **File Storage**: Laravel Storage
+- **Authentication**: Custom Auth System with OWASP Top 10 2021 Compliance
+- **File Storage**: Laravel Storage with Security Validation
 - **Styling**: Custom CSS with CSS Variables
 - **JavaScript**: Vanilla JS for interactions
 - **PDF Handling**: Browser-based PDF viewer
+- **Security**: Comprehensive Security Logging & Rate Limiting
+
+## 🔒 **Security Features**
+
+### **OWASP Top 10 2021 Compliance** ✅
+- **A01:2021 – Broken Access Control**: Comprehensive middleware protection
+- **A02:2021 – Cryptographic Failures**: bcrypt password hashing
+- **A03:2021 – Injection**: Eloquent ORM with parameterized queries
+- **A04:2021 – Insecure Design**: Multi-level rate limiting system
+- **A05:2021 – Security Misconfiguration**: Proper environment configuration
+- **A06:2021 – Vulnerable Components**: Latest Laravel 12 with updated dependencies
+- **A07:2021 – Authentication Failures**: Secure token-based password reset
+- **A08:2021 – Software Integrity**: Strict file upload validation
+- **A09:2021 – Logging Failures**: Comprehensive security logging
+- **A10:2021 – SSRF**: No external HTTP requests
+
+### **Enhanced Security Measures**
+- **Security Logging**: Complete audit trail for all user actions
+- **Rate Limiting**: Multi-level rate limiting (6/min auth, 3/min author requests, 10/min admin)
+- **Security Headers**: Comprehensive HTTP security headers
+- **Input Validation**: Strong password complexity requirements
+- **File Upload Security**: Strict MIME type and size validation
+- **Session Security**: Proper session management and cleanup
 
 ## 📁 **Project Structure**
 
@@ -339,4 +415,18 @@ For support and questions, please open an issue on GitHub or contact the develop
 
 ## 🔄 **Changelog**
 
-See [CHANGELOG.md](CHANGELOG.md) for a list of changes and updates.
+See [BACKEND_ANALYSIS_REPORT.md](BACKEND_ANALYSIS_REPORT.md) for detailed technical documentation and recent security enhancements.
+
+## 🎯 **Roadmap**
+
+- [ ] Two-Factor Authentication (2FA)
+- [ ] API endpoints for mobile apps
+- [ ] Advanced analytics dashboard
+- [ ] Multi-language support
+- [ ] Advanced search with Elasticsearch
+- [ ] Book recommendations system
+- [ ] Social features (reviews, ratings)
+
+---
+
+**Built with ❤️ using Laravel 12 and modern web technologies**

@@ -175,23 +175,23 @@
                                         <circle cx="9" cy="7" r="4"></circle>
                                     </svg>
                                 </div>
-                                {{ $user->name }}
+                                {{ $user->name ?? 'Unknown User' }}
                             </td>
-        <td>{{ $user->email }}</td>
+        <td>{{ $user->email ?? 'No Email' }}</td>
                             <td>
-                                <span class="role-badge role-{{ $user->role }}">
-                                    {{ $user->getRoleDisplayName() }}
+                                <span class="role-badge role-{{ $user->role ?? 'user' }}">
+                                    {{ $user->getRoleDisplayName() ?? 'User' }}
                                 </span>
                             </td>
-                            <td>{{ $user->created_at->format('M d, Y') }}</td>
+                            <td>{{ $user->created_at ? $user->created_at->format('M d, Y') : 'Unknown' }}</td>
                             <td class="actions">
-                                <a href="{{ route('users.edit', $user->id) }}" class="action-btn edit-btn" title="Edit User">
+                                <a href="{{ route('users.edit', $user->id ?? 0) }}" class="action-btn edit-btn" title="Edit User">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                     </svg>
                                 </a>
-                                <form action="{{ route('users.delete', $user->id) }}" method="POST" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this user?')">
+                                <form action="{{ route('users.delete', $user->id ?? 0) }}" method="POST" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this user?')">
                 @csrf
                 @method('DELETE')
                                     <button type="submit" class="action-btn delete-btn" title="Delete User">
@@ -236,13 +236,13 @@
     @foreach($books as $book)
     <tr>
                             <td class="book-title">{{ $book->title }}</td>
-        <td>{{ $book->user->name }}</td>
+        <td>{{ $book->user->name ?? 'Unknown Author' }}</td>
                             <td>
                                 <span class="category-badge">
                                     {{ $book->category->name ?? 'Uncategorized' }}
                                 </span>
                             </td>
-                            <td>{{ $book->created_at->format('M d, Y') }}</td>
+                            <td>{{ $book->created_at ? $book->created_at->format('M d, Y') : 'Unknown' }}</td>
                             <td class="actions">
                                 <a href="{{ route('showBook', $book->id) }}" class="action-btn view-btn" title="View Book">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -300,9 +300,9 @@
     <tr>
                             <td class="category-name">{{ $category->name }}</td>
                             <td>
-                                <span class="books-count">{{ $category->books->count() }} books</span>
+                                <span class="books-count">{{ $category->books ? $category->books->count() : 0 }} books</span>
                             </td>
-                            <td>{{ $category->created_at->format('M d, Y') }}</td>
+                            <td>{{ $category->created_at ? $category->created_at->format('M d, Y') : 'Unknown' }}</td>
                             <td class="actions">
                                 <a href="{{ route('editCategory', $category->id) }}" class="action-btn edit-btn" title="Edit Category">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -328,6 +328,61 @@
             </div>
         </div>
     </div>
+
+    <!-- Notifications Section -->
+    @if(auth()->user()->unreadNotifications->count() > 0)
+    <div class="data-card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9a6 6 0 0 1 12 0"></path>
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                </svg>
+                Author Requests
+            </h2>
+            <div class="card-actions">
+                <span class="card-count">{{ auth()->user()->unreadNotifications->count() }} requests</span>
+            </div>
+        </div>
+        <div class="notifications-container">
+            @foreach(auth()->user()->unreadNotifications as $notification)
+            <div class="notification-item">
+                <div class="notification-content">
+                    <div class="notification-message">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                        </svg>
+                        <span>{{ $notification->data['message'] ?? 'No message' }}</span>
+                    </div>
+                    <div class="notification-actions">
+                        <form action="{{ route('admin.author.approve', $notification->data['user_id'] ?? 0) }}" method="POST" class="inline-form">
+                            @csrf
+                            <input type="hidden" name="notification_id" value="{{ $notification->id }}">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 6L9 17l-5-5"></path>
+                                </svg>
+                                Approve
+                            </button>
+                        </form>
+                        <form action="{{ route('admin.author.reject', $notification->data['user_id'] ?? 0) }}" method="POST" class="inline-form">
+                            @csrf
+                            <input type="hidden" name="notification_id" value="{{ $notification->id }}">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 6L6 18M6 6l12 12"></path>
+                                </svg>
+                                Reject
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 </div>
 
 <style>
@@ -519,6 +574,12 @@
     background: var(--bg-secondary);
 }
 
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .card-title {
     display: flex;
     align-items: center;
@@ -683,6 +744,104 @@
     margin: 0;
 }
 
+/* Notifications */
+.notifications-container {
+    padding: 24px;
+}
+
+.notification-item {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.notification-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.notification-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+    font-weight: 500;
+    flex: 1;
+}
+
+.notification-message svg {
+    color: var(--accent-primary);
+}
+
+.notification-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.inline-form {
+    margin: 0;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-success:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: var(--text-secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #6b7280;
+    transform: translateY(-1px);
+}
+
 /* Alert */
 .alert {
     display: flex;
@@ -732,6 +891,16 @@
     .data-table th,
     .data-table td {
         padding: 12px 8px;
+    }
+    
+    .notification-content {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .notification-actions {
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -810,6 +979,19 @@ document.addEventListener('DOMContentLoaded', function() {
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
         }, 800 + (index * 100));
+    });
+
+    // Animate notification items
+    const notificationItems = document.querySelectorAll('.notification-item');
+    notificationItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            item.style.transition = 'all 0.6s ease';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+        }, 1000 + (index * 100));
     });
 });
 </script>

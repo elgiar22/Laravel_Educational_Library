@@ -14,7 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             "isAdmin"=>App\Http\Middleware\isAdmin::class,
             "isAuthor"=>App\Http\Middleware\isAuthor::class,
-            "permission"=>App\Http\Middleware\CheckPermission::class
+            "permission"=>App\Http\Middleware\CheckPermission::class,
+            "security.headers"=>App\Http\Middleware\SecurityHeaders::class
+        ]);
+        
+        // Apply security headers to all web routes
+        $middleware->web(append: [
+            App\Http\Middleware\SecurityHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
