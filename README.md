@@ -1,6 +1,6 @@
-# 📚 Digital Library Management System
+# 📚 Laravel Educational Library
 
-A comprehensive digital library management system built with Laravel 12, featuring advanced role-based access control (RBAC), modern UI/UX design with dark mode support, robust book management capabilities, and OWASP Top 10 2021 security compliance.
+A comprehensive educational library management system built with Laravel 12, featuring advanced role-based access control (RBAC), modern UI/UX design with dark mode support, robust book management capabilities, and OWASP Top 10 2021 security compliance.
 
 ## ✨ Features
 
@@ -65,8 +65,8 @@ A comprehensive digital library management system built with Laravel 12, featuri
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/digital-library-management.git
-cd digital-library-management
+git clone https://github.com/yourusername/Laravel_Educational_Library.git
+cd Laravel_Educational_Library
 ```
 
 2. **Install dependencies**
@@ -87,7 +87,7 @@ Edit `.env` file with your database credentials:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=digital_library
+DB_DATABASE=laravel_educational_library
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -159,7 +159,7 @@ After running the seeders, you'll have these default users:
 ## 📁 Project Structure
 
 ```
-digital-library-management/
+Laravel_Educational_Library/
 ├── app/
 │   ├── Http/Controllers/
 │   │   ├── AdminController.php      # Admin dashboard and user management
