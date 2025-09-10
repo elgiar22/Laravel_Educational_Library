@@ -59,7 +59,8 @@ class User extends Authenticatable implements CanResetPasswordContract
      */
     public function isGuest(): bool
     {
-        return !$this->exists;
+        return !$this->exists; // not found
+        
     }
 
     /**
@@ -67,7 +68,7 @@ class User extends Authenticatable implements CanResetPasswordContract
      */
     public function isUser(): bool
     {
-        return $this->role === 'user';
+        return $this->role === 'user'; 
     }
 
     /**

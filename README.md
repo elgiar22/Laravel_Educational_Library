@@ -1,22 +1,22 @@
-# 📚 Laravel Books Management System
+# 📚 Digital Library Management System
 
-A comprehensive digital library management system built with Laravel 12, featuring advanced roles and permissions, modern UI/UX design with dark mode support, and robust book management capabilities.
+A comprehensive digital library management system built with Laravel 12, featuring advanced role-based access control (RBAC), modern UI/UX design with dark mode support, robust book management capabilities, and OWASP Top 10 2021 security compliance.
 
-## 🌟 Features
+## ✨ Features
 
-### 🔐 **Advanced Roles & Permissions System**
-- **Guest**: Can view books and categories only
-- **User**: Can read and download books
-- **Author**: Can create, edit, and manage their own books
+### 🔐 **Role-Based Access Control**
+- **Guest**: View books and categories only
+- **User**: Read and download books
+- **Author**: Create, edit, and manage their own books
 - **Admin**: Full system access and control
 
 ### 📖 **Book Management**
-- Create, edit, delete books with PDF file uploads
+- Create, edit, and delete books with PDF file uploads
 - Categorize books by categories
-- Advanced search and filter functionality
+- Advanced search and filtering functionality
 - Read books online with PDF viewer
 - Download books (permission-based)
-- Author-specific book management (My Books)
+- Author-specific book management
 
 ### 🏷️ **Category Management**
 - Create and manage book categories
@@ -25,7 +25,7 @@ A comprehensive digital library management system built with Laravel 12, featuri
 
 ### 👥 **User Management**
 - User registration and authentication
-- Role-based access control with middleware
+- Role-based access control
 - Admin user management panel
 - Profile editing with role management
 - Password reset functionality
@@ -36,22 +36,24 @@ A comprehensive digital library management system built with Laravel 12, featuri
 - Glassmorphism effects and modern styling
 - Smooth animations and transitions
 - Modern card-based layouts
-- Interactive role selection interface
+- Bootstrap 5 integration
 
 ### 📊 **Admin Dashboard**
 - Statistics overview
 - User management interface
 - Book management tools
 - Category management
-- Quick action cards
+- Author request management
+- Notification system
 
-### 🔍 **Advanced Search**
+### 🔍 **Advanced Search & Filtering**
 - Search books by title, author, description
 - Filter by categories
 - Real-time search results
 - Advanced search interface
+- Sort by newest/oldest
 
-## 🚀 **Quick Start**
+## 🚀 Quick Start
 
 ### Prerequisites
 - PHP 8.2+
@@ -63,8 +65,8 @@ A comprehensive digital library management system built with Laravel 12, featuri
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/laravel-books-management.git
-cd laravel-books-management
+git clone https://github.com/yourusername/digital-library-management.git
+cd digital-library-management
 ```
 
 2. **Install dependencies**
@@ -85,7 +87,7 @@ Edit `.env` file with your database credentials:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=laravel_books_management
+DB_DATABASE=digital_library
 DB_USERNAME=root
 DB_PASSWORD=
 ```
@@ -108,80 +110,31 @@ php artisan serve
 
 Visit `http://localhost:8000` to see your application!
 
-## 👤 **Default Users**
+## 👤 Default Users
 
 After running the seeders, you'll have these default users:
 
-- **Admin**: admin@example.com / password
-- **Author**: author@example.com / password
-- **User**: user@example.com / password
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@example.com | password |
+| Author | author@example.com | password |
+| User | user@example.com | password |
 
-## 🚀 **Development**
-
-### **Running Tests**
-```bash
-php artisan test
-```
-
-### **Code Quality**
-```bash
-# Laravel Pint (Code Style)
-./vendor/bin/pint
-
-# PHPStan (Static Analysis)
-./vendor/bin/phpstan analyse
-```
-
-### **Security Audit**
-```bash
-# Check for security vulnerabilities
-composer audit
-
-# Update dependencies
-composer update
-```
-
-## 📊 **Security Logging**
-
-The system includes comprehensive security logging for:
-- User authentication (login/logout)
-- Failed login attempts
-- Book operations (create/edit/delete)
-- Category operations
-- Admin actions (role changes, user management)
-- Author requests
-- Unauthorized access attempts
-
-All logs include IP addresses, user agents, and timestamps for security monitoring.
-
-## 🤝 **Contributing**
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-### **Security Guidelines**
-- Follow OWASP Top 10 2021 guidelines
-- Implement proper input validation
-- Use prepared statements for database queries
-- Log all security-relevant events
-- Test thoroughly before submitting PRs
-
-## 🛠️ **Technology Stack**
+## 🛠️ Technology Stack
 
 - **Backend**: Laravel 12
 - **Frontend**: Blade Templates, Bootstrap 5
-- **Database**: MySQL/PostgreSQL
-- **Authentication**: Custom Auth System with OWASP Top 10 2021 Compliance
-- **File Storage**: Laravel Storage with Security Validation
-- **Styling**: Custom CSS with CSS Variables
-- **JavaScript**: Vanilla JS for interactions
+- **Database**: MySQL with Eloquent ORM
+- **Authentication**: Custom authentication system with password reset
+- **File Storage**: Laravel Storage with security validation
+- **Styling**: Custom CSS with CSS variables
+- **JavaScript**: Vanilla JavaScript for interactions
 - **PDF Handling**: Browser-based PDF viewer
-- **Security**: Comprehensive Security Logging & Rate Limiting
+- **Security**: OWASP Top 10 2021 compliance with comprehensive logging
+- **Rate Limiting**: Multi-level rate limiting system
+- **Notifications**: Laravel notification system
 
-## 🔒 **Security Features**
+## 🔒 Security Features
 
 ### **OWASP Top 10 2021 Compliance** ✅
 - **A01:2021 – Broken Access Control**: Comprehensive middleware protection
@@ -203,10 +156,10 @@ All logs include IP addresses, user agents, and timestamps for security monitori
 - **File Upload Security**: Strict MIME type and size validation
 - **Session Security**: Proper session management and cleanup
 
-## 📁 **Project Structure**
+## 📁 Project Structure
 
 ```
-laravel-books-management/
+digital-library-management/
 ├── app/
 │   ├── Http/Controllers/
 │   │   ├── AdminController.php      # Admin dashboard and user management
@@ -214,18 +167,23 @@ laravel-books-management/
 │   │   ├── BookController.php      # Book CRUD operations
 │   │   ├── CategoryController.php  # Category management
 │   │   ├── HomeController.php      # Home page controller
-│   │   └── Controller.php          # Base controller
+│   │   └── UserController.php      # User management
+│   ├── Http/Middleware/
+│   │   ├── CheckPermission.php     # Custom permission middleware
+│   │   ├── isAdmin.php            # Admin role middleware
+│   │   ├── isAuthor.php           # Author role middleware
+│   │   └── SecurityHeaders.php    # Security headers middleware
 │   ├── Models/
 │   │   ├── Book.php                # Book model with relationships
 │   │   ├── Category.php            # Category model
 │   │   └── User.php                # User model with roles
-│   └── Http/Middleware/
-│       └── CheckPermission.php     # Custom permission middleware
+│   └── Notifications/
+│       ├── AuthorRequestNotification.php
+│       └── CustomResetPasswordNotification.php
 ├── resources/views/
 │   ├── Admin/
 │   │   ├── dashboard.blade.php     # Admin dashboard
-│   │   ├── editUser.blade.php      # User editing interface
-│   │   └── author-requests/        # Author request management
+│   │   └── editUser.blade.php      # User editing interface
 │   ├── Books/
 │   │   ├── all.blade.php           # All books listing
 │   │   ├── create.blade.php        # Book creation form
@@ -256,30 +214,37 @@ laravel-books-management/
 │   │   ├── script.js               # Main JavaScript
 │   │   └── bootstrap.min.js        # Bootstrap JavaScript
 │   └── storage/                    # File storage
-└── database/
-    ├── migrations/                 # Database migrations
-    └── seeders/                    # Database seeders
+├── database/
+│   ├── migrations/                 # Database migrations
+│   ├── seeders/                    # Database seeders
+│   └── factories/                  # Model factories
+└── tests/
+    ├── Feature/                    # Feature tests
+    └── Unit/                       # Unit tests
 ```
 
-## 🔧 **Key Features Implementation**
+## 🔧 Key Features Implementation
 
 ### **Roles & Permissions System**
 - Custom middleware for permission checking
 - Role-based route protection
 - Dynamic permission checking in views
 - Flexible permission system with granular control
+- Author request system for role elevation
 
 ### **File Management**
 - Secure PDF file uploads with validation
-- File storage configuration
+- File storage configuration with public disk
 - Download protection based on user permissions
 - Browser-based PDF viewer for reading
+- File path management and security
 
 ### **Search & Filtering**
-- Advanced search functionality
+- Advanced search functionality across multiple fields
 - Category-based filtering
 - Real-time search results
 - Responsive search interface
+- Sort by newest/oldest functionality
 
 ### **UI/UX Design**
 - CSS Variables for theming
@@ -288,8 +253,16 @@ laravel-books-management/
 - Modern animations and transitions
 - Glassmorphism effects
 - Mobile-first design approach
+- Bootstrap 5 integration
 
-## 🚀 **API Endpoints**
+### **Security Implementation**
+- Comprehensive security logging
+- Multi-level rate limiting (6/min auth, 3/min author requests, 10/min admin)
+- Security headers middleware
+- Custom password reset notifications
+- OWASP Top 10 2021 compliance
+
+## 🚀 API Endpoints
 
 ### Authentication
 - `GET /register` - Registration form
@@ -332,69 +305,8 @@ laravel-books-management/
 ### Search
 - `GET /search` - Search books
 
-## 🔒 **Security Features**
+## 🧪 Testing
 
-- CSRF protection on all forms
-- Input validation and sanitization
-- File upload security
-- Role-based access control
-- Secure password hashing
-- SQL injection prevention
-- XSS protection
-
-## 🎨 **Customization**
-
-### Styling
-The application uses CSS variables for easy theming. Main variables are defined in `public/css/style.css`:
-
-```css
-:root {
-  --primary-color: #007bff;
-  --secondary-color: #6c757d;
-  --background-color: #ffffff;
-  --text-color: #333333;
-  /* Add more variables as needed */
-}
-```
-
-### Dark Mode
-Dark mode is implemented with CSS variables and JavaScript toggle functionality.
-
-## 🧪 **Testing**
-
-Run the test suite:
 ```bash
 php artisan test
 ```
-
-## 📦 **Deployment**
-
-### Production Setup
-1. Set environment to production
-2. Optimize for production:
-```bash
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-composer install --optimize-autoloader --no-dev
-npm run build
-```
-
-### File Permissions
-Ensure proper file permissions:
-```bash
-chmod -R 755 storage/
-chmod -R 755 bootstrap/cache/
-```
-
-## 🤝 **Contributing**
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-
-
-**Built with ❤️ using Laravel 12 and modern web technologies**

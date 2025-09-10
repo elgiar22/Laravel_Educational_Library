@@ -12,16 +12,7 @@ use Illuminate\Support\Facades\Log;
 class BookController extends Controller
 {
 
-    public function authorBooks()
-{
-    $user = Auth::user();
-
-    $books = $user->books()->with('category')->latest()->get();
-
-    return view('Books/mybooks', compact('books'));
-}
-
-
+    // 
 
 
     public function all(){
@@ -76,6 +67,7 @@ class BookController extends Controller
         // Get paginated results
         $books = $booksQuery->paginate(6)->appends($request->all());
         
+        // Logging
         Log::info('Book search performed', [
             'query' => $query,
             'category_id' => $category_id,
@@ -130,7 +122,7 @@ class BookController extends Controller
     
             $data['user_id'] = Auth::id();
             $book = Book::create($data);
-            
+            //logging
             Log::info('Book created', [
                 'book_id' => $book->id,
                 'book_title' => $book->title,
@@ -149,7 +141,7 @@ class BookController extends Controller
         $book = Book::findOrFail($id);
         
         // Check if user can edit this book
-        if (!Auth::user()->canEditBook($book)) {
+        if (!Auth::user()->canEditBook($book)) { // Author only can edit 
             Log::warning('Unauthorized book edit attempt', [
                 'user_id' => Auth::id(),
                 'book_id' => $book->id,
@@ -228,7 +220,7 @@ class BookController extends Controller
         $book = Book::findOrFail($id);
         
         // Check if user can delete this book
-        if (!auth()->user()->canDeleteBook($book)) {
+        if (!auth()->user()->canDeleteBook($book)) { // Author only can edit 
             Log::warning('Unauthorized book deletion attempt', [
                 'user_id' => Auth::id(),
                 'book_id' => $book->id,
@@ -302,5 +294,13 @@ public function read(Book $book)
     return response()->file($filePath);
 }
 
+    public function authorBooks()
+{
+    $user = Auth::user();
+
+    $books = $user->books()->with('category')->latest()->get();
+
+    return view('Books/mybooks', compact('books'));
+}
 
 }

@@ -23,7 +23,7 @@ class AuthController extends Controller
         $data = $request->validate([
         "name"=>"required|string|max:200|regex:/^[a-zA-Z\s]+$/",
         "email"=>"required|email|max:255|unique:users,email",
-        "password"=>"required|string|min:8|confirmed|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/",
+        "password"=>"required|string|min:8|confirmed",
         ]);
         $data['password'] = bcrypt($request->password);
 
@@ -86,11 +86,13 @@ class AuthController extends Controller
 
     public function logout(){
         $user = Auth::user();
+
         Log::info('User logged out', [
             'user_id' => $user ? $user->id : null,
             'email' => $user ? $user->email : null,
             'ip' => request()->ip()
         ]);
+        
         Auth::logout();
         return redirect(route('loginForm'));   
     }
