@@ -48,7 +48,7 @@ class CategoryController extends Controller
             ]);
         //store 
     
-            $data['image'] = Storage::putFile("categories",$request->image);        
+            $data['image'] = Storage::disk('public')->putFile("categories",$request->image);        
             $category = Category::create($data);
             
             Log::info('Category created', [
@@ -85,9 +85,9 @@ class CategoryController extends Controller
 
             if($request->has('image')){
                 //delete old image
-                Storage::delete($category->image);
+                Storage::disk('public')->delete($category->image);
                 //upload new image
-                $data['image'] = Storage::putFile("categories",$request->image);        
+                $data['image'] = Storage::disk('public')->putFile("categories",$request->image);        
             }else{
                 $data['image'] = $category->image;
             }
@@ -121,7 +121,7 @@ class CategoryController extends Controller
         
     if ($category->image) {
 
-        Storage::delete($category->image);
+        Storage::disk('public')->delete($category->image);
     }
         $category->delete();
 

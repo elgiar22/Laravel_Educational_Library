@@ -310,3 +310,33 @@ Laravel_Educational_Library/
 ```bash
 php artisan test
 ```
+
+## 🔧 Troubleshooting
+
+### Image Display Issues
+If images are not displaying properly:
+
+1. **Create storage symbolic link**:
+   ```bash
+   php artisan storage:link
+   ```
+
+2. **Verify storage configuration**:
+   - Ensure `FILESYSTEM_DISK=public` in `.env`
+   - Check that `storage/app/public` directory exists
+   - Verify symbolic link from `public/storage` to `storage/app/public`
+
+3. **Manual symbolic link creation** (Windows):
+   ```cmd
+   mklink /D "public\storage" "storage\app\public"
+   ```
+
+4. **Check file permissions**:
+   - Ensure web server has read access to `storage/app/public`
+   - Verify uploaded files are in correct directories
+
+## 📝 Recent Updates
+
+- **Fixed image storage issue**: Updated controllers to use `Storage::disk('public')` for proper file storage
+- **Enhanced security**: Improved file upload validation and storage configuration
+- **Improved documentation**: Added troubleshooting section for common issues

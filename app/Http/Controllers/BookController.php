@@ -116,8 +116,8 @@ class BookController extends Controller
             ]);
         //store 
     
-            $data['image'] = Storage::putFile("books",$request->image);
-            $data['file_path'] = Storage::putFile("files",$request->file_path);
+            $data['image'] = Storage::disk('public')->putFile("books",$request->image);
+            $data['file_path'] = Storage::disk('public')->putFile("files",$request->file_path);
 
     
             $data['user_id'] = Auth::id();
@@ -181,18 +181,18 @@ class BookController extends Controller
 
             if($request->has('image')){
                 //delete old image
-                Storage::delete($book->image);
+                Storage::disk('public')->delete($book->image);
                 //upload new image
-                $data['image'] = Storage::putFile("books",$request->image);        
+                $data['image'] = Storage::disk('public')->putFile("books",$request->image);        
             }else{
                 $data['image'] = $book->image;
             }
 
             if($request->has('file_path')){
             //delete old file
-             Storage::delete($book->file_path);
+             Storage::disk('public')->delete($book->file_path);
          //upload new file
-                $data['file_path'] = Storage::putFile("files",$request->file_path);        
+                $data['file_path'] = Storage::disk('public')->putFile("files",$request->file_path);        
             }else{
                 $data['file_path'] = $book->file_path;
             }
